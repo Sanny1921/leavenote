@@ -81,6 +81,22 @@ footer{font-size:12px;color:var(--dim);margin-top:26px;border-top:1px solid var(
 </div>
 
 <details>
+<summary>No AI on this device? Use the manual template</summary>
+<p>Same four questions, answered by you instead of the model. Copy it and fill it in anywhere.</p>
+<textarea id="manualTpl" readonly rows="11">LEAVENOTE - [project] - [date]
+Working on: [one line]
+
+WHAT CHANGED:
+- [what you changed, naming the file or function]
+UNFINISHED:
+- [what is half-done]
+START TOMORROW: [the single first thing to do when you sit back down]
+WATCH OUT:
+- [leftover TODOs, debug lines, anything easy to forget]</textarea>
+<button id="copyTpl">Copy template</button> <span id="tplStatus" class="hint"></span>
+</details>
+
+<details>
 <summary>Privacy &amp; limits</summary>
 <p>Your diff and notes are processed by a model running in this browser, not an AI service. The app has no server, no analytics and no uploads. Hosting/CDN/model providers receive ordinary file requests and your IP address. Model files may stay in the browser cache; saved notes live in this browser's local storage until you clear them.</p>
 <p>A small model can misread a diff or invent a next step. The note is a memory aid, not ground truth - review it, and keep your real source of truth in git. Long diffs are trimmed to the first 1600 characters, so paste the part tomorrow-you most needs.</p>
@@ -112,7 +128,7 @@ $('load').onclick=async()=>{
   try{
     if(!navigator.gpu)throw new Error('WebGPU is unavailable in this browser. Try a recent Chrome or Edge on a device with a supported GPU. Nothing was sent anywhere.');
     const adapter=await navigator.gpu.requestAdapter();
-    if(!adapter)throw new Error('No compatible GPU found, so the local AI cannot run on this device. Nothing was sent anywhere. The note template below still works without AI.');
+    if(!adapter)throw new Error('No compatible GPU found, so the local AI cannot run on this device. Nothing was sent anywhere. The manual template further down still works without AI.');
     setStatus('Downloading the local model. Keep this tab open; this happens once.');
     const {CreateWebWorkerMLCEngine,prebuiltAppConfig}=await import('https://esm.run/@mlc-ai/web-llm@0.2.84');
     worker=new Worker(new URL('./worker.js',import.meta.url),{type:'module'});
@@ -245,6 +261,10 @@ $('save').onclick=()=>{
     $('copyStatus').textContent='Saved in this browser.';
     refreshSaved();
   }catch(e){$('copyStatus').textContent='Saving failed: browser storage unavailable.';}
+};
+$('copyTpl').onclick=async()=>{
+  try{await navigator.clipboard.writeText($('manualTpl').value);$('tplStatus').textContent='Copied.';}
+  catch(e){$('manualTpl').select();document.execCommand('copy');$('tplStatus').textContent='Copied.';}
 };
 refreshSaved();
 controls();
