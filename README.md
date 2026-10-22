@@ -16,6 +16,10 @@ Built for Hacktoberfest 2026, DEV Open-Source AI Challenge, Week 3: **Slow and S
 - `index.html` - the whole app (UI + logic)
 - `worker.js` - WebLLM web worker
 
+## Status
+
+Live demo: https://leavenote-zeta.vercel.app (deploys automatically from `main`).
+
 ## Run locally
 
 Any static server works, e.g. `npx serve .` - then open the page in a WebGPU-capable browser.
